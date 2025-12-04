@@ -1,0 +1,9 @@
+{
+  "name": "comparador",
+  "version": "1.0.0",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.43.0",
+    "cheerio": "^1.0.0",
+    "axios": "^1.6.0"
+  }
+}
