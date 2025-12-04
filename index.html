@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es" class="light">
+<head>
+  <meta charset="UTF-8" />
+  <title>Comparador de precios</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#7C5E3A',   // marrón cálido
+            secondary: '#A68A64', // beige premium
+            olive: '#5B6D41',     // verde oliva sobrio
+            offer: '#C2571A',     // naranja tierra
+            appdark: {
+              bg: '#0A0A0A',
+              card: '#141414',
+              softer: '#191919',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Tabler Icons -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/@tabler/icons-webfont@latest/tabler-icons.min.css"
+  />
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- html5-qrcode -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+  <!-- Leaflet (mapa) -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- CSS propio -->
+  <link rel="stylesheet" href="comparador.css" />
+</head>
+
+<body class="min-h-screen flex flex-col bg-slate-50 text-slate-900 dark:bg-appdark-bg dark:text-slate-50">
+
+  <!-- =======================
+       HEADER
+  ======================== -->
+  <header class="sticky top-0 z-30 bg-white/95 dark:bg-appdark-bg/95 backdrop-blur border-b border-slate-200 dark:border-neutral-800">
+    <div class="px-4 py-3 flex items-center justify-between">
+      <!-- Menú -->
+      <button id="btn-profile-menu"
+              class="w-9 h-9 rounded-full border border-slate-300 dark:border-neutral-600 
+                     flex items-center justify-center text-[18px] 
+                     bg-white dark:bg-appdark-card text-slate-700 dark:text-slate-200">
+        ☰
+      </button>
+
+      <!-- Marca -->
+      <div class="flex items-center gap-2">
+        <div class="w-9 h-9 rounded-2xl bg-primary text-white flex items-center justify-center font-black text-lg">
+          C
+        </div>
+        <div>
+          <h1 class="text-base font-semibold leading-tight">
+            Comparador de precios
+          </h1>
+          <p class="text-[11px] text-slate-500 dark:text-neutral-400">
+            Supermercados de Paraguay en un solo lugar
+          </p>
+        </div>
+      </div>
+
+      <!-- Tema (◐) -->
+      <button id="theme-toggle"
+              class="w-9 h-9 rounded-full border border-slate-300 dark:border-neutral-600 
+                     flex items-center justify-center text-[18px] 
+                     bg-white dark:bg-appdark-card text-slate-700 dark:text-slate-200">
+        ◐
+      </button>
+    </div>
+  </header>
+
+  <!-- =======================
+       MAIN
+  ======================== -->
+  <main class="flex-1 bg-slate-50 dark:bg-appdark-bg pb-24">
+
+    <!-- HOME -->
+    <section id="view-home" class="view active px-4 pt-4 space-y-4">
+
+      <!-- buscador global -->
+      <div class="relative">
+        <i class="ti ti-search text-[18px] text-slate-400 dark:text-neutral-500 absolute left-3 top-1/2 -translate-y-1/2"></i>
+        <input id="search-input" type="text"
+               class="w-full rounded-full bg-white dark:bg-appdark-card border border-slate-200 dark:border-neutral-800 pl-9 pr-4 py-2.5 text-sm
+                      focus:outline-none focus:ring-2 focus:ring-secondary/70"
+               placeholder="Buscar producto (ej: leche 1L, gaseosa 2L...)" />
+      </div>
+
+      <!-- categorías -->
+      <section>
+        <h2 class="text-sm font-semibold mb-2">Categorías</h2>
+        <div class="flex gap-3 overflow-x-auto pb-1 text-[11px]">
+          <button class="cat-chip flex-shrink-0 w-16 flex flex-col items-center gap-1" data-category="Lácteos">
+            <div class="w-12 h-12 rounded-full bg-emerald-50 dark:bg-appdark-card text-2xl flex items-center justify-center border border-emerald-100 dark:border-neutral-700">🥛</div>
+            <span class="text-slate-600 dark:text-slate-100">Lácteos</span>
+          </button>
+          <button class="cat-chip flex-shrink-0 w-16 flex flex-col items-center gap-1" data-category="Gaseosas">
+            <div class="w-12 h-12 rounded-full bg-sky-50 dark:bg-appdark-card text-2xl flex items-center justify-center border border-sky-100 dark:border-neutral-700">🥤</div>
+            <span class="text-slate-600 dark:text-slate-100">Gaseosas</span>
+          </button>
+          <button class="cat-chip flex-shrink-0 w-16 flex flex-col items-center gap-1" data-category="Limpieza">
+            <div class="w-12 h-12 rounded-full bg-slate-100 dark:bg-appdark-card text-2xl flex items-center justify-center border border-slate-200 dark:border-neutral-700">🧼</div>
+            <span class="text-slate-600 dark:text-slate-100">Limpieza</span>
+          </button>
+          <button class="cat-chip flex-shrink-0 w-16 flex flex-col items-center gap-1" data-category="Bebidas">
+            <div class="w-12 h-12 rounded-full bg-amber-50 dark:bg-appdark-card text-2xl flex items-center justify-center border border-amber-100 dark:border-neutral-700">🍺</div>
+            <span class="text-slate-600 dark:text-slate-100">Bebidas</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- mayores ofertas -->
+      <section class="space-y-2">
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-semibold">Mayores ofertas</h2>
+          <span class="text-[11px] text-slate-500 dark:text-neutral-400">Datos demo / scrapper</span>
+        </div>
+        <div id="offers-carousel" class="flex gap-3 overflow-x-auto pb-1">
+          <!-- cards por JS -->
+        </div>
+      </section>
+
+      <!-- acá JS inserta "Más buscados" (tabla) -->
+    </section>
+
+    <!-- PRODUCTO -->
+    <section id="view-product" class="view px-4 pt-4 space-y-4">
+
+      <button id="back-home" class="text-primary underline text-sm">← Volver al inicio</button>
+
+      <div class="rounded-3xl bg-white dark:bg-appdark-card border border-slate-200 dark:border-neutral-800 overflow-hidden shadow-sm">
+        <div class="h-44 bg-slate-100 dark:bg-appdark-softer">
+          <img id="prod-img" src="" alt="Producto" class="w-full h-full object-cover" />
+        </div>
+        <div class="p-3 space-y-2">
+          <p id="prod-category" class="text-[11px] text-olive uppercase tracking-wide"></p>
+          <h2 id="prod-name" class="text-base font-semibold"></h2>
+          <p class="text-[11px] text-slate-500 dark:text-neutral-400">
+            Código de barras: <span id="prod-barcode"></span>
+          </p>
+          <button id="fav-toggle"
+                  class="mt-1 inline-flex items-center gap-1 px-3 py-1.5 text-xs rounded-full bg-secondary text-white font-semibold">
+            ☆ Favoritos
+          </button>
+        </div>
+      </div>
+      <!-- precios por supermercado -->
+      <section class="px-1 space-y-2">
+        <div class="flex flex-wrap gap-2 text-[11px]">
+          <span id="chip-best"
+                class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-200 dark:border-emerald-800/60">
+          </span>
+          <span id="chip-avg"
+                class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200 dark:bg-appdark-softer dark:text-slate-200 dark:border-neutral-700">
+          </span>
+          <span id="chip-savings"
+                class="px-2 py-0.5 rounded-full bg-offer/10 text-offer border border-offer/40">
+          </span>
+        </div>
+
+        <h3 class="text-sm font-semibold mt-2 mb-1">Precios en supermercados</h3>
+        <div id="price-list" class="space-y-2"></div>
+      </section>
+
+      <!-- tendencia de precios -->
+      <section class="px-1">
+        <div class="rounded-3xl bg-white dark:bg-appdark-card border border-slate-200 dark:border-neutral-800 p-3 shadow-sm space-y-3">
+          <h3 id="stats-title" class="text-sm font-semibold">Tendencia mensual</h3>
+          <div class="grid grid-cols-2 gap-2 text-[11px]">
+            <div>
+              <p class="text-slate-500 dark:text-neutral-400">Mínimo histórico</p>
+              <p id="stat-min" class="text-sm font-bold text-olive"></p>
+            </div>
+            <div>
+              <p class="text-slate-500 dark:text-neutral-400">Promedio histórico</p>
+              <p id="stat-avg" class="text-sm font-bold text-primary"></p>
+            </div>
+            <div>
+              <p class="text-slate-500 dark:text-neutral-400">Promos detectadas</p>
+              <p id="stat-promos" class="text-sm font-bold text-offer"></p>
+            </div>
+            <div>
+              <p class="text-slate-500 dark:text-neutral-400">Mínimo estimado mensual</p>
+              <p id="stat-monthly" class="text-sm font-bold text-primary"></p>
+            </div>
+          </div>
+          <div class="h-48">
+            <canvas id="priceChart"></canvas>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- ESTADÍSTICAS GLOBAL -->
+    <section id="view-stats" class="view px-4 pt-4 space-y-3">
+      <h2 class="text-base font-semibold">Estadísticas</h2>
+      <div class="flex items-center gap-2">
+        <div class="relative flex-1">
+          <i class="ti ti-search text-[16px] text-slate-400 dark:text-neutral-500 absolute left-3 top-1/2 -translate-y-1/2"></i>
+          <input id="stats-search" type="text"
+                 class="w-full rounded-full bg-slate-50 dark:bg-appdark-softer border border-slate-200 dark:border-neutral-700 pl-9 pr-4 py-1.5 text-[12px]
+                        focus:outline-none focus:ring-1 focus:ring-secondary/70"
+                 placeholder="Buscar producto para analizar" />
+        </div>
+        <button id="stats-reset"
+                class="px-3 py-1.5 rounded-full border border-slate-200 dark:border-neutral-700 text-[11px] text-slate-700 dark:text-slate-100 bg-slate-50 dark:bg-appdark-softer">
+          Reset
+        </button>
+      </div>
+      <p class="text-[12px] text-slate-600 dark:text-neutral-300">
+        Buscá un producto para ver sus tendencias de precio.
+      </p>
+    </section>
+
+    <!-- SCANNER -->
+    <section id="view-scanner" class="view px-4 pt-4 space-y-3">
+      <h2 class="text-base font-semibold">Escanear código de barras</h2>
+      <p id="scanner-status" class="text-[12px] text-slate-600 dark:text-neutral-300">
+        Cámara detenida.
+      </p>
+      <div id="scanner-reader"
+           class="rounded-2xl overflow-hidden bg-slate-100 dark:bg-appdark-softer border border-slate-200 dark:border-neutral-700">
+      </div>
+      <div class="flex gap-2 mt-2">
+        <button id="scanner-start"
+                class="flex-1 rounded-2xl bg-primary text-white text-sm font-semibold py-2">
+          Iniciar cámara
+        </button>
+        <button id="scanner-stop"
+                class="flex-1 rounded-2xl bg-slate-100 dark:bg-appdark-softer text-slate-800 dark:text-slate-100 text-sm font-semibold py-2">
+          Detener
+        </button>
+      </div>
+    </section>
+
+    <!-- FAVORITOS + ALERTAS -->
+    <section id="view-favorites" class="view px-4 pt-4 space-y-3">
+      <h2 class="text-base font-semibold">Mis favoritos</h2>
+      <div id="favorites-list" class="space-y-2"></div>
+
+      <h3 class="text-sm font-semibold mt-3">Bajadas de precio</h3>
+      <div id="alerts-list" class="space-y-2"></div>
+    </section>
+
+    <!-- PROMOS -->
+    <section id="view-promos" class="view px-4 pt-4 space-y-3">
+      <h2 class="text-base font-semibold">Promociones destacadas</h2>
+      <div id="promos-list" class="space-y-2"></div>
+    </section>
+
+    <!-- MAPA -->
+    <section id="view-map" class="view px-4 pt-4 space-y-3">
+      <h2 class="text-base font-semibold">Supermercados cercanos</h2>
+      <div id="map" class="w-full h-80 rounded-2xl border border-slate-200 dark:border-neutral-800"></div>
+    </section>
+
+    <!-- TÉRMINOS -->
+    <section id="view-terms" class="view px-4 pt-4 space-y-3">
+      <h2 class="text-base font-semibold">Términos y condiciones</h2>
+      <p class="text-sm text-slate-600 dark:text-neutral-300">
+        Esta app utiliza únicamente datos públicos de los supermercados para mostrar comparaciones de precios.
+      </p>
+    </section>
+
+    <!-- ACERCA DE -->
+    <section id="view-about" class="view px-4 pt-4 space-y-3">
+      <h2 class="text-base font-semibold">Sobre la app</h2>
+      <p class="text-sm text-slate-600 dark:text-neutral-300">
+        Comparador de precios es un proyecto independiente que busca transparencia en los precios de supermercados de Paraguay.
+      </p>
+    </section>
+
+  </main>
+
+  <!-- FOOTER / NAV -->
+  <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px]
+              bg-white/95 dark:bg-appdark-bg/95 
+              border-t border-slate-200 dark:border-neutral-800
+              px-6 py-2 z-50 flex items-center justify-between">
+
+    <!-- Inicio -->
+    <button class="nav-btn flex flex-col items-center gap-0.5 flex-1 active"
+            data-target="home">
+      <i class="ti ti-home text-[20px] leading-none"></i>
+      <span class="text-[11px]">Inicio</span>
+    </button>
+
+    <!-- Stats -->
+    <button class="nav-btn flex flex-col items-center gap-0.5 flex-1"
+            data-target="stats">
+      <i class="ti ti-chart-line text-[20px] leading-none"></i>
+      <span class="text-[11px]">Estadísticas</span>
+    </button>
+
+    <!-- espacio FAB -->
+    <div class="flex-1"></div>
+
+    <!-- Favoritos (campanita) -->
+    <button class="nav-btn flex flex-col items-center gap-0.5 flex-1"
+            data-target="favorites">
+      <i class="ti ti-bell text-[20px] leading-none"></i>
+      <span class="text-[11px]">Favoritos</span>
+    </button>
+
+    <!-- Promos -->
+    <button class="nav-btn flex flex-col items-center gap-0.5 flex-1"
+            data-target="promos">
+      <i class="ti ti-discount-2 text-[20px] leading-none"></i>
+      <span class="text-[11px]">Promos</span>
+    </button>
+
+    <!-- FAB scanner -->
+    <button id="scan-fab"
+            class="absolute left-1/2 -top-6 -translate-x-1/2
+                   w-14 h-14 rounded-full bg-secondary text-white
+                   flex items-center justify-center text-[24px] shadow-xl
+                   border border-amber-900/20">
+      <i class="ti ti-barcode-scan"></i>
+    </button>
+  </nav>
+
+  <!-- MENÚ (sheet inferior) -->
+  <div id="profile-sheet"
+       class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden z-50 flex items-end">
+    <div class="bg-white dark:bg-appdark-card w-full rounded-t-3xl p-4 space-y-2 border-t border-slate-200 dark:border-neutral-700">
+      <h2 class="text-base font-semibold mb-1">Menú</h2>
+
+      <button class="sheet-item" data-sheet="map">
+        <span>Mapa de supermercados</span>
+        <i class="ti ti-chevron-right"></i>
+      </button>
+
+      <button class="sheet-item" data-sheet="terms">
+        <span>Términos y condiciones</span>
+        <i class="ti ti-chevron-right"></i>
+      </button>
+
+      <button class="sheet-item" data-sheet="about">
+        <span>Sobre la app</span>
+        <i class="ti ti-chevron-right"></i>
+      </button>
+
+      <button id="close-sheet"
+              class="w-full mt-2 py-2 bg-slate-200 dark:bg-neutral-700 rounded-full text-sm">
+        Cerrar
+      </button>
+    </div>
+  </div>
+
+  <!-- JS FRONT -->
+  <script src="comparador.js"></script>
+</body>
+</html>

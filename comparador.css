@@ -1,0 +1,182 @@
+/* ============================================
+   BASE
+============================================ */
+html {
+  scroll-behavior: smooth;
+  background: #f4f4f5;
+}
+
+body {
+  max-width: 430px;
+  margin: 0 auto;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont;
+}
+
+/* ocultar vistas por defecto */
+.view {
+  display: none;
+}
+.view.active {
+  display: block;
+}
+
+/* ============================================
+   FOOTER / NAV
+============================================ */
+nav {
+  backdrop-filter: blur(10px);
+}
+
+/* Estado activo de los botones del footer */
+.nav-btn.active i,
+.nav-btn.active span {
+  color: var(--tw-prose-headings, #7C5E3A) !important;
+  font-weight: 600;
+}
+
+/* ============================================
+   THEME SWITCH (◐)
+============================================ */
+#theme-toggle {
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+/* ============================================
+   PROFILE SHEET (modal inferior)
+============================================ */
+#profile-sheet {
+  animation: fadeIn 0.25s ease forwards;
+}
+
+#profile-sheet .sheet-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 4px;
+  font-size: 14px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+#profile-sheet .sheet-item:hover {
+  background: rgba(0,0,0,0.05);
+}
+
+.dark #profile-sheet .sheet-item {
+  border-color: rgba(255,255,255,0.08);
+}
+.dark #profile-sheet .sheet-item:hover {
+  background: rgba(255,255,255,0.07);
+}
+
+#profile-sheet .sheet-item i {
+  font-size: 18px;
+}
+
+/* animación del sheet (sube desde abajo) */
+#profile-sheet > div {
+  animation: slideUp 0.35s ease forwards;
+  transform: translateY(100%);
+}
+
+@keyframes slideUp {
+  to { transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ============================================
+   PRODUCT CARDS / OFFER CARDS
+============================================ */
+.offer-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  background: #C2571A;
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+}
+
+/* ============================================
+   SCANNER
+============================================ */
+#scanner-reader {
+  aspect-ratio: 1 / 1;
+}
+
+/* ============================================
+   MAP (Leaflet)
+============================================ */
+#map {
+  background: #ddd;
+}
+
+/* arreglar bordes del leaflet en dark mode */
+.dark .leaflet-control-container .leaflet-control {
+  background: #191919 !important;
+  color: #fff !important;
+  border-color: #333 !important;
+}
+
+/* ============================================
+   PROMOS CARDS
+============================================ */
+.promo-card {
+  border-radius: 1.5rem;
+  padding: 1rem;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+}
+.dark .promo-card {
+  background: #141414;
+  border-color: #333;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+/* ============================================
+   FIXES MOBILE
+============================================ */
+input,
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* hacer que el body no haga saltos */
+body {
+  overflow-x: hidden;
+}
+
+/* ============================================
+   ITEMS DE FAVORITOS / ALERTAS
+============================================ */
+.favorite-item,
+.alert-item {
+  border-radius: 1rem;
+  padding: 0.75rem;
+  border: 1px solid #e5e7eb;
+  background: #fafafa;
+}
+.dark .favorite-item,
+.dark .alert-item {
+  background: #141414;
+  border-color: #333;
+}
+
+.favorite-item img,
+.alert-item img {
+  border-radius: 10px;
+}
